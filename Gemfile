@@ -33,6 +33,8 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use Capistrano for deployment
+
+
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
@@ -53,3 +55,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'clearance'
+
+gem 'figaro'
