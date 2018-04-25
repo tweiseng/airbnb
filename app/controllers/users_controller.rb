@@ -38,9 +38,9 @@ def user_from_params
     end
   end
 
-  # def permit_params
-  # params.require(:user).permit(:first_name, :last_name, :email, :password, :birthday)
-  #   end
+  def permit_params
+  params.require(:user).permit(:first_name, :last_name, :email, :password, :birthday)
+    end
 end
 
 
