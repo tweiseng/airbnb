@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Congratulations! Your booking for <%= @listing.title %> has been confirmed </h1>
+    <p>
+      You can see details of your new reservation here: <%= url_for(host: 'localhost:3000',
+            controller: 'reservations',
+            action: 'index') %> 
+    </p>
+  </body>
+</html>

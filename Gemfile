@@ -61,3 +61,19 @@ gem 'figaro'
 gem 'omniauth'
 
 gem 'omniauth-google-oauth2'
+
+gem 'faker'
+
+gem 'will_paginate'
+
+gem 'carrierwave'
+
+gem 'mini_magick'
+
+gem 'fog-aws'
+
+gem 'braintree'
+
+gem "letter_opener", :group => :development
+
+gem 'sidekiq'

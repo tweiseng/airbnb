@@ -1,0 +1,85 @@
+<p id="notice"></p>
+
+
+<p>
+  <strong>Name:</strong>
+  <%= @listing.title %>
+</p>
+
+<p>
+  <strong>View</strong><br>
+  <% @listing.pictures.each_with_index do |picture, index| %>
+  <%=link_to(image_tag(@listing.pictures[index].thumb.url), carousel_path)%>
+</p>
+<% end %>
+
+<p>
+  <strong>Location:</strong>
+  <%= @listing.location %>
+</p>
+
+<p>
+  <strong>Property type:</strong>
+  <%= @listing.property_type %>
+</p>
+
+<p>
+  <strong>Room number:</strong>
+  <%= @listing.number_rooms %>
+</p>
+
+<p>
+  <strong>Bed number:</strong>
+  <%= @listing.number_beds %>
+</p>
+
+<p>
+  <strong>Guest number:</strong>
+  <%= @listing.number_guests %>
+</p>
+
+<p>
+  <strong>Country:</strong>
+  <%= @listing.country %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @listing.state %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @listing.city %>
+</p>
+
+<p>
+  <strong>Postcode:</strong>
+  <%= @listing.postcode %>
+</p>
+
+<p>
+  <strong>Address:</strong>
+  <%= @listing.address %>
+</p>
+
+<p>
+  <strong>Price:</strong>
+  <%= @listing.price %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @listing.description %>
+</p>
+
+
+
+
+<%= link_to 'Back', listings_path %><br>
+
+<%= link_to 'Edit', edit_listing_path(@listing) %><br>
+
+<a href="/listings/<%= @listing.id %>/reservations/new">Request to Book</a><br>
+
+

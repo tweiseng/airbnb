@@ -1,1 +1,15 @@
-<h1>oihsoidhfiohsdf</h1>
+<% if signed_in? &&current_user.customer? %>
+
+	<% for listing in @listings do  %>
+	<% if listing.verification == "yes" %>
+	<%= listing.location %><br>
+	$<%= listing.price %><br>
+	<a href="listings/<%= listing.id %>">View</a><br>
+	<% end %>
+	<% end %>
+
+<% else %>
+	<%= link_to "Sign up", sign_up_path %>
+	<p>you need to be signed in to view listings</p>
+<% end %>
+

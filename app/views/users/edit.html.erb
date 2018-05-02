@@ -1,0 +1,13 @@
+ <h1> Editing Users</h1>
+ <%= form_for @user do |form| %>
+ <!-- render partial: '/users/edit_form', object: form  this code is similar to the one below-->
+ <!-- render partial: '/users/edit_form', locals: { edit_form: form }  -->
+
+     <%= render partial: '/users/edit_form', locals: {f: form} %>
+
+    <div class="submit-field">
+      <%= form.submit %>
+    </div>
+
+
+<% end %>
