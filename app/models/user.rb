@@ -9,8 +9,6 @@ mount_uploader :image, ImageUploader
  has_many :authentications, dependent: :destroy
  has_many :listings
  has_many :reservations
-
-end
  def self.create_with_auth_and_hash(authentication, auth_hash)
    user = self.create!(
      first_name: auth_hash["info"]["first_name"],
@@ -30,5 +28,7 @@ end
    x = self.authentications.find_by(provider: 'google_oauth2')
    return x.token unless x.nil?
  end
+end
+
 
 
