@@ -74,6 +74,9 @@ gem 'fog-aws'
 
 gem 'braintree'
 
-gem "letter_opener", :group => :development
-
 gem 'sidekiq'
+
+gem 'rails_12factor'
+
+gem 'foreman'
+
