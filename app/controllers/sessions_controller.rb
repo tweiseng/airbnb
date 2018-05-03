@@ -5,6 +5,8 @@ def create_from_omniauth
 
   # if: previously already logged in with OAuth
   if authentication.user
+    # byebug
+    # p authentication.user
     user = authentication.user
     authentication.update_token(auth_hash)
     @next = root_url

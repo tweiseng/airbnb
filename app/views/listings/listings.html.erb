@@ -1,0 +1,30 @@
+<% if signed_in? &&current_user.customer? %>
+	<% count =0 %>
+	<% @listings.each do |listing|  %>
+	<% if listing.verification == "yes" %>
+	<%= count+1%>
+	<%= listing.location %><br>
+	$<%= listing.price %><br>
+	<% if listing.pictures?%>
+	<%= image_tag listing.pictures[0].thumb.url %><br>
+	<% end %>
+	<a href="/listings/<%= listing.id %>">View</a><br>
+	<a href="/listings/<%= listing.id %>/reservations/new">Request to Book</a><br>
+	<% count +=1%>
+	<% end %>
+	<% end %>
+<%elsif signed_in? && current_user.superadmin?%>
+<% count =0 %>
+<% @listings.each do |listing|  %>
+<%= count+1%>
+	<%= listing.location %><br>
+	
+	     <a href="listings/<%= listing.id %>/verify"> Verified: <%= listing.verification %></a><br>
+	<% count +=1%>
+    <% end %>              
+                    
+<% else %>
+	<%= link_to "Sign up", sign_up_path %>
+	<p>you need to be signed in to view listings</p>
+<% end %>
+

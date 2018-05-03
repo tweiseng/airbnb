@@ -1,0 +1,31 @@
+
+ <%= form_for(@reservation, url:listing_reservations_path(@listing)) do |form| %>
+
+<div class="text-field">
+  <%= form.label :checkin %>
+  <%= form.date_field :checkin %>
+</div>
+
+<div class="text-field">
+  <%= form.label :checkout %>
+  <%= form.date_field :checkout %>
+</div>
+
+<div class="text-field">
+  <%= form.label :number_guests %>
+  <%= form.number_field :number_guests %>
+</div>
+
+ <div class="field">
+    <%= form.hidden_field :user_id , :value=> current_user.id %>
+  </div>
+
+ <div class="field">
+    <%= form.hidden_field :listing_id , :value => params[:listing_id] %>
+  </div>
+
+      <div class="actions">
+      <%= form.submit %>
+    </div>
+
+    <% end %>
