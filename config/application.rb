@@ -10,7 +10,7 @@ require 'mini_magick'
 
 require 'fog/aws'
 
-require 'letter_opener'
+# require 'letter_opener'
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
