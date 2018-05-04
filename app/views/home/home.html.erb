@@ -7,9 +7,14 @@
 	<a href="listings/<%= listing.id %>">View</a><br>
 	<% end %>
 	<% end %>
-
+<% elsif signed_in?%>
+	<%if current_user.admin? ||current_user.superadmin %>
+	<%= link_to "All Users", users_path%>
+	<% end %>
 <% else %>
 	<%= link_to "Sign up", sign_up_path %>
 	<p>you need to be signed in to view listings</p>
 <% end %>
+
+
 
