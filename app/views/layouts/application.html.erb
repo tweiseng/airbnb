@@ -15,7 +15,8 @@
    
   <% end %>
   <%= button_to "Sign out", sign_out_path, method: :delete %>
-  <%= link_to "Edit", edit_user_path(current_user) %>
+  <%= link_to "Edit", edit_user_path(current_user) %><br>
+  <%= link_to "New Listing", new_listing_path%>
 <% else %>
   <%= link_to "Sign in", sign_in_path %>
 <% end %>
