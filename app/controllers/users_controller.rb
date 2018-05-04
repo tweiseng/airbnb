@@ -5,6 +5,10 @@ class UsersController < Clearance::UsersController
     render template: "users/new"       
   end      
 
+  def index
+    @user = User.all
+  end
+
   def create
   @user = user_from_params
     if @user.save
@@ -41,6 +45,7 @@ class UsersController < Clearance::UsersController
     first_name = user_params.delete(:first_name)
     last_name = user_params.delete(:last_name)
     image = user_params.delete(:image)
+    role = user_params.delete(:role)
     
 
 
@@ -50,12 +55,12 @@ class UsersController < Clearance::UsersController
       user.first_name = first_name
       user.last_name = last_name
       user.image = image
-      
+      user.role = role
     end
   end
 
     def permit_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :birthday, :image)
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :birthday, :image, :role)
     end
 end
 
