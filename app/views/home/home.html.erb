@@ -8,7 +8,7 @@
 	<% end %>
 	<% end %>
 <% elsif signed_in?%>
-	<%if current_user.admin? ||current_user.superadmin %>
+	<%if current_user.admin? ||current_user.superadmin? %>
 	<%= link_to "All Users", users_path%>
 	<% end %>
 <% else %>
