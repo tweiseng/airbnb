@@ -25,7 +25,7 @@ def checkout
     flash[:notice] = "Transaction successful"
     redirect_to :root
 
-    ReservationMailer.payment_confirm(listing.user, reservation.id).deliver_now
+    ConfirmationJob.perform_later(listing.user, reservation.id)
   else
     # redirect_to :back, :flash => { :error => "Transaction failed. Please try again." }
     flash[:notice] = "Transaction failed. Please try again"

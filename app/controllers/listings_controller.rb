@@ -2,7 +2,12 @@ class ListingsController < ApplicationController
 
 
   def listings
-    @listings = Listing.all#.paginate(:page => params[:page], :per_page => 5)
+    if params[:search]
+      @listings = Listing.where('location LIKE?', "%#{params[:search]}%") 
+       # @coupon = Coupon.where('store LIKE ?', "%#{params[:store]}%")
+    else
+      @listings = Listing.all#.paginate(:page => params[:page], :per_page => 5)
+    end
   end
 
   def carousel

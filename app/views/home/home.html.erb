@@ -1,3 +1,10 @@
+<%= form_tag listings_path, method: :get do %>
+<p>
+	<%= text_field_tag :search, params[:search]  %>
+	<%= submit_tag "Search", :name => nil %>
+</p>
+<% end %>
+
 <% if signed_in? &&current_user.customer? %>
 
 	<% for listing in @listings do  %>
