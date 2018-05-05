@@ -6,4 +6,9 @@ class ReservationJob < ApplicationJob
   	ReservationMailer.welcome_email(customer,listing, reservation_id).deliver_now
     # Do something later
   end
+
+  def confirm(host, reservation_id)
+  	ReservationMailer.payment_confirm(host,reservation_id).deliver_now
+  end
+  
 end

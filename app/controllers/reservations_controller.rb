@@ -15,8 +15,9 @@ class ReservationsController < ApplicationController
 		@reservation.listing_id = params[:listing_id]
 		reservation = Reservation.where(listing_id: params[:listing_id])
 		if reservation == []
+			# byebug
 			@reservation.save
-			redirect_to reservations_path
+			redirect_to braintree_new_path(reservation: @reservation)
 		else
 			count =0
 			roll = -1
@@ -25,9 +26,11 @@ class ReservationsController < ApplicationController
 					flash[:notice] = "Sorry. You stupid person these dates have been booked."
 					roll =1
 					redirect_to :back
+					
 				elsif roll ==-1 && count == reservation.length-1
+					# byebug
 					@reservation.save
-					redirect_to reservations_path
+					redirect_to braintree_new_path(reservation: @reservation)
 				end
 				 count+=1
 			end

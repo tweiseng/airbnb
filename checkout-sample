@@ -1,0 +1,299 @@
+BraintreeController
+class BraintreeController < ApplicationController
+    
+    def new
+        @listing_id = params[:listing_id]
+        @client_token = Braintree::ClientToken.generate
+        p params
+        @reservation = Reservation.find(params[:reservation_id])
+    end
+
+    def checkout
+      nonce_from_the_client = params[:checkout_form][:payment_method_nonce]
+          listing = Listing.find(params[:listing_id])
+          reservation = Reservation.find(params[:checkout_form][:reservation_id])
+      result = Braintree::Transaction.sale(
+       :amount => listing.price,
+       :payment_method_nonce => nonce_from_the_client,
+       :options => {
+          :submit_for_settlement => true
+        }
+       )
+      byebug
+      @user = current_user
+      if result.success?
+          ReservationMailer.reservation_email(current_user, @listing, @rsvp_id).deliver_now
+          reservation.status = true  
+        redirect_to :root, :flash => { :success => "Transaction successful!" }
+
+
+      else
+          reservation.destroy 
+        redirect_to :root, :flash => { :error => "Transaction failed. Please try again." }
+        # reservation.destroy
+      end
+    end
+end
+-------------------------------------------------------------------------------------------------------------------------------
+ReservationController
+class ReservationsController < ApplicationController
+    def new
+        @listing = Listing.find(params[:id])
+        @rsvp = Reservation.new
+
+    end
+
+    def show
+        @rsvp = Reservation.all
+    end
+
+
+    def create
+        @listing = Listing.find(params[:id])
+        @rsvp = Reservation.new(reservation_params)
+        respond_to do |format|
+
+            if date_checker(@rsvp.start_date, @rsvp.end_date)
+                @rsvp.save        
+                #Message produced when successfull        
+                format.html { redirect_to braintree_new_path(listing_id: @listing.id, reservation_id: @rsvp.id), notice: 'Booking was successfully created' }
+                format.json { render json: @rsvp, status: :created, location: @rsvp }     
+            else
+                #Message produced when failed
+                format.html { redirect_to reservations_new_path, notice: "Booking could not be made. The dates may have been taken" }
+            end
+
+            
+        end
+    end
+
+        
+      private 
+
+    def reservation_params
+            params.require(:reservations).permit(:user_id, :listing_id, :guest_number, :verification, :start_date, :end_date)
+    end
+
+    def date_checker(start_date,end_date)
+        @reservation = Reservation.where("listing_id = ?" , params[:id])
+        if @reservation.count != 0
+            @reservation.each do |r|
+                if !(r.end_date <= start_date || r.start_date >= end_date)
+                        flash[:notice] ="Sorry, the dates have been taken."
+                    return false
+                end
+            end
+        else
+            return true
+        end
+    end
+end
+--------------------------------------------------------------------------------------------------------------------------------------
+reservation.rb
+class Reservation < ActiveRecord::Base
+    belongs_to :user
+    belongs_to :listing
+end
+--------------------------------------------------------------------------------------------------------------------------------------
+views/Braintree/new.html.erb
+<%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+
+<div class="demo-frame">
+
+  <%= form_for :checkout_form, url: braintree_checkout_path(listing_id: @listing_id), html: { id: "cardForm"} do |form| %>
+
+    <%= form.label :card_number, "Credit Card Number", html: {class: "hosted-fields--label"} %>
+    <div id="card-number" class="hosted-field"></div>
+
+    <%= form.label :expiration_date, "Expiration Date", html: {class: "hosted-fields--label"} %>
+    <div id="expiration-date" class="hosted-field"></div>
+
+    <%= form.label :cvv, "CVV", html: {class: "hosted-fields--label"} %>
+    <div id="cvv" class="hosted-field"></div>
+
+    <%= form.hidden_field "payment_method_nonce" %>
+    <%= form.hidden_field "reservation_id" %>
+
+    <div class="button-container">
+      <%= form.submit "Purchase", disabled: false, class: "btn btn-primary", id: "submit-payment-btn" %>
+    </div>
+  <% end %>
+</div>
+
+
+<script>
+
+
+var form = document.querySelector('#cardForm');
+var submit = document.querySelector("#submit-payment-btn");
+var authorization = '<%= @client_token %>';
+var reservation_id = '<%= @reservation.id %>';
+
+braintree.client.create({
+  // Replace this with your own authorization.
+  authorization: authorization
+}, function (clientErr, clientInstance) {
+  if (clientErr) {
+    // Handle error in client creation
+    return;
+  }
+
+  braintree.hostedFields.create({
+    client: clientInstance,
+    styles: {
+      'input': {
+        'font-size': '14pt'
+      },
+      'input.invalid': {
+        'color': 'red'
+      },
+      'input.valid': {
+        'color': 'green'
+      }
+    },
+    fields: {
+      number: {
+        selector: '#card-number',
+        placeholder: '4111 1111 1111 1111'
+      },
+      cvv: {
+        selector: '#cvv',
+        placeholder: '123'
+      },
+      expirationDate: {
+        selector: '#expiration-date',
+        placeholder: '10/2019'
+      }
+    }
+  }, function (hostedFieldsErr, hostedFieldsInstance) {
+    if (hostedFieldsErr) {
+      // Handle error in Hosted Fields creation
+      return;
+    }
+
+    submit.removeAttribute('disabled');
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
+        if (tokenizeErr) {
+          // Handle error in Hosted Fields tokenization
+          return;
+        }
+
+        // Put `payload.nonce` into the `payment_method_nonce` input, and then
+        // submit the form. Alternatively, you could send the nonce to your server
+        // with AJAX.
+        document.querySelector('input[name="checkout_form[payment_method_nonce]"]').value = payload.nonce;
+        document.querySelector('input[name="checkout_form[reservation_id]"]').value = reservation_id;
+        form.submit();
+      });
+    }, false);
+  });
+});
+</script>
+--------------------------------------------------------------------------------------------------------------------------------------
+reservation_email.html.erb
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Welcome, <%= @user.first_name %>!</h1>
+
+    <p>
+      You have successfully made a reservation<br>
+    </p>
+
+    <p>Thanks for making your booking and have a great day!</p>
+  </body>
+</html>
+--------------------------------------------------------------------------------------------------------------------------------------
+reservation_email.txt.erb
+Welcome <%= @user.first_name %>
+===============================================
+
+ 
+You have successfully made your booking,
+
+ 
+Thanks for making a booking and have a great day!
+--------------------------------------------------------------------------------------------------------------------------------------
+views/reservation/new.html.erb
+<h1>Make Your Booking!</h1>
+
+<%= form_for :reservations, html: { multipart: true }, action: :create, method: :post do |f| %>
+
+<p>Check-in date: <%= f.date_field :start_date %></p>
+<p>Check-out date: <%= f.date_field :end_date %></p>
+
+<p>Guest Number:
+<% i = [1,2,3,4,5,6] %>
+ <%= f.select :guest_number, i %>
+</p>
+
+
+<%= f.hidden_field :user_id, :value => current_user.id %>
+<%= f.hidden_field :listing_id, :value => @listing.id %>
+<%= f.submit "Submit" %>
+<% end %>
+--------------------------------------------------------------------------------------------------------------------------------------
+config/evnironment/development.rb
+ # routes, locales, etc. This feature depends on the listen gem.
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  
+  config.action_mailer.delivery_method = :sendmail
+  
+  config.active_job.queue_adapter = :sidekiq
+
+  config.action_mailer.perform_deliveries = true
+  
+  config.action_mailer.raise_delivery_errors = true
+  
+  config.action_mailer.default_options = {from: 'coderanil25@gmail.com'}
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  address:              'smtp.gmail.com',
+  port:                 587,
+  domain:               'gmail.com',
+  user_name:            'coderanil25@gmail.com',
+  password:             'c0dingr0cks!',
+  authentication:       'plain',
+  enable_starttls_auto: true  }
+end
+--------------------------------------------------------------------------------------------------------------------------------------
+routes.rb
+Rails.application.routes.draw do
+  
+  get 'braintree/new'
+  get 'welcome/index' => "welcome#index"
+  resources :listings do 
+    resources :reservations, only: [:create]
+  end
+
+  resources :passwords, controller: "clearance/passwords", only: [:create, :new]
+  resource :session, controller: "clearance/sessions", only: [:create]
+
+  resources :users, controller: "users", only: [:create] do
+    resource :password,
+      controller: "clearance/passwords",
+      only: [:create, :edit, :update]
+  end
+
+  get "/sign_in" => "clearance/sessions#new", as: "sign_in"
+  delete "/sign_out" => "clearance/sessions#destroy", as: "sign_out"
+  get "/sign_up" => "clearance/users#new", as: "sign_up"
+  post "/users" => "users#create"
+  
+  get "/listings/:id/reservation/new" => "reservations#new", as: "reservations_new"
+  post "/listings/:id/reservation/new" => "reservations#create"
+  post 'braintree/checkout'
+
+  get "/auth/:provider/callback" => "sessions#create_from_omniauth"
+  # # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  
+  root to: "home#index"
+end

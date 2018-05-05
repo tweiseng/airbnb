@@ -1,6 +1,7 @@
 <% @reservations.each do|i| %>
-<%= i %><br>
-
+<%= i.listing.title %><br>
+<%= i.checkin %><br>
+<%= i.checkout%><br>
+<%= i.number_guests%>
 <% end %>
 
-<%= @reservations %>
