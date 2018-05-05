@@ -23,8 +23,8 @@
   </div>
 
   <div id="flash">
-    <% flash.each do |key, value| -%>
-      <div id="flash_<%= key %>"><%=h value %></div>
+    <% flash.each do |key, value| %>
+      <div id="flash_<%= key %>"><%= value %></div>
     <% end %>
   </div>
 

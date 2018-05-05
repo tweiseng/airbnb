@@ -15,4 +15,10 @@ class ReservationMailer < ApplicationMailer
 		mail(to: @customer.email, subject: 'Welcome to My Awesome Site')
 
 	end
+
+	def payment_confirm(host, reservation_id)
+				# @url = "localhost:3000/reservations"
+		mail(to: host.email, subject: 'Payment has been made')
+	end
+
 end
