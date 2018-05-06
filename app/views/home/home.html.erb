@@ -1,6 +1,11 @@
 <%= form_tag listings_path, method: :get do %>
 <p>
 	<%= text_field_tag :search, params[:search]  %>
+<p>
+Price Range <br>
+<%= number_field_tag :price, params[:price] %> to <%= number_field_tag :price1, params[:price1] %>
+
+</p>
 	<%= submit_tag "Search", :name => nil %>
 </p>
 <% end %>

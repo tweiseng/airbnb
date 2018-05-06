@@ -1,0 +1,3 @@
+M	app/controllers/listings_controller.rb
+M	app/models/listing.rb
+M	app/views/listings/listings.html.erb

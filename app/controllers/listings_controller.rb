@@ -3,8 +3,13 @@ class ListingsController < ApplicationController
 
   def listings
     if params[:search]
-      @listings = Listing.where('location LIKE?', "%#{params[:search]}%") 
-       # @coupon = Coupon.where('store LIKE ?', "%#{params[:store]}%")
+      @listings = Listing.where('location LIKE?', "%#{params[:search]}%")
+      @listings = Listing.where('title LIKE?', "%#{params[:search]}%") 
+      @listings = Listing.where('city LIKE?', "%#{params[:search]}%")
+      @listings = Listing.where('country LIKE?', "%#{params[:search]}%")
+      if params[:price] && params[:price1] 
+      @listings = Listing.where(price: params[:price]..params[:price1])
+      end
     else
       @listings = Listing.all#.paginate(:page => params[:page], :per_page => 5)
     end
