@@ -1,7 +1,8 @@
 <% @reservations.each do|i| %>
-<%= i.listing.title %><br>
-<%= i.checkin %><br>
-<%= i.checkout%><br>
-<%= i.number_guests%>
+Reservation no: <%= i.id %><br>
+Listing: <%= i.listing.title %><br>
+Checkin date: <%= i.checkin %><br>
+Checkout date: <%= i.checkout%><br>
+Number of guests: <%= i.number_guests%><br><br>
 <% end %>
 
