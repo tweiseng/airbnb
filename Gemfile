@@ -80,3 +80,7 @@ gem 'rails_12factor'
 
 gem 'foreman'
 
+gem 'rspec'
+
+gem 'rspec-given'
+

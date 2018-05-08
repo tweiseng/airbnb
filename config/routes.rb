@@ -36,6 +36,7 @@ get "/users/:id/edit"=>"users#edit"
 get "/listings/:id/carousel" =>"listings#carousel", as:"carousel"
 get "welcome/index" =>"welcome#index"
 post "/braintree/checkout", as: "braintree_checkout"
+post "/search" => "listings#search", as: "search"
 
 # get "/listings/:id/reservations/new" =>"reservations#new", as:"newres"
 # post "/listings/:id/reservations/new" =>"reservations#create"
