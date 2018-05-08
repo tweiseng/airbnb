@@ -11,8 +11,32 @@ class ListingsController < ApplicationController
       @listings = Listing.where(price: params[:price]..params[:price1])
       end
     else
-      @listings = Listing.all#.paginate(:page => params[:page], :per_page => 5)
+      @listings = Listing.all #.paginate(:page => params[:page], :per_page => 5)
     end
+  end
+
+  def search
+    p params
+    @location = Listing.where('location LIKE?', "%#{params[:query]}%")
+    @title = Listing.where('title LIKE?', "%#{params[:query]}%") 
+    @city = Listing.where('city LIKE?', "%#{params[:query]}%")
+    @country = Listing.where('country LIKE?', "%#{params[:query]}%")
+    @min_max = Listing.where(price: params[:price]..params[:price1])
+     
+      render json: @location 
+
+  
+  end 
+
+   def destroy
+    # if allowed?(action: "listing_destroy", user: @listing.user)
+      @listing.destroy
+      respond_to do |format|
+        format.js 
+        format.html { redirect_to listings_url, :flash => { :success => 'Listing was successfully destroyed.' } }
+        # format.json { head :no_content }
+      end
+    # end
   end
 
   def carousel
@@ -23,7 +47,6 @@ class ListingsController < ApplicationController
   # GET /listings/1.json
   def list
     @listing = Listing.find(params[:id])
-    
   end
 
   def verify
@@ -59,6 +82,7 @@ class ListingsController < ApplicationController
   # POST /listings
   # POST /listings.json
   def create
+    byebug
     @listing = Listing.new(listing_params)
 
     respond_to do |format|

@@ -1,6 +1,10 @@
-<%= form_tag listings_path, method: :get do %>
+
+<%= form_tag listings_path, id: "listings-search", method: :post do %>
 <p>
-	<%= text_field_tag :search, params[:search]  %>
+	<%= text_field_tag "query", nil, list: "list" %>
+	<datalist id="list">
+		
+	</datalist>
 <p>
 Price Range <br>
 <%= number_field_tag :price, params[:price] %> to <%= number_field_tag :price1, params[:price1] %>
@@ -38,4 +42,48 @@ Price Range <br>
 	<%= link_to "Sign up", sign_up_path %>
 	<p>you need to be signed in to view listings</p>
 <% end %>
+
+<script>
+$("#listings-search").on("keyup", function(){
+  autocomplete()
+});
+
+function autocomplete(){
+	// let search = $("#listings-search").serialize()
+	// console.log("serialize")
+	// console.log(search);
+	console.log("I am inside of autocomplete")
+	// let query = $("#city-search").serialize();
+	// console.log("==============")
+	// console.log(query);
+  $.ajax({
+    url: '/search',
+    type: 'POST',
+    data: $("#listings-search").serialize(), //takes the form data and authenticity token and converts it into a standard URL
+    dataType: 'json', //specify what type of data you're expecting back from the servers
+    error: function(request, status, error) {
+    	alert(request.responseText);
+        console.log("Something went wrong");
+    },
+    success: function(data) {
+    	console.log(" I am back in javascript ajax");
+      	console.log(data)
+      	let list = $("#list")
+      	console.log(list);	
+      $("#list").html("");
+
+      data.forEach(function(element) {
+        var option = document.createElement("option");
+        option.value = element.location;
+
+        // append option to list
+        $("#list").append(option);
+      });
+    }
+  });
+}
+
+
+
+</script>
 
