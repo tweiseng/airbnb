@@ -2,6 +2,7 @@ class ListingsController < ApplicationController
 
 
   def listings
+    byebug
     if params[:search]
       @listings = Listing.where('location LIKE?', "%#{params[:search]}%")
       @listings = Listing.where('title LIKE?', "%#{params[:search]}%") 
@@ -79,10 +80,17 @@ class ListingsController < ApplicationController
 
   end
 
+  def picdel
+    # byebug
+    @listing = Listing.find(params[:id])
+    @listing['pictures'].delete_at(params[:i].to_i)
+    @listing.save
+    render :edit
+  end
   # POST /listings
   # POST /listings.json
   def create
-    byebug
+    # byebug
     @listing = Listing.new(listing_params)
 
     respond_to do |format|
@@ -99,7 +107,11 @@ class ListingsController < ApplicationController
   # PATCH/PUT /listings/1
   # PATCH/PUT /listings/1.json
   def update
+    # byebug
     @listing = Listing.find(params[:id])
+    if params[:listing][:pictures]!= nil
+      @listing.pictures += params[:listing][:pictures]
+    end
     respond_to do |format|
       if @listing.update(listing_params)
         format.html { redirect_to @listing, notice: 'Listing was successfully updated.' }
@@ -130,7 +142,7 @@ class ListingsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def listing_params
       params.require(:listing).permit(:title, :location, :property_type, :number_rooms, :number_beds, 
-        :number_guests, :country, :state, :city, :postcode, :address, :price, :description, :user_id, pictures:[])
+        :number_guests, :country, :state, :city, :postcode, :address, :price, :description, :user_id)
     end
 end
 

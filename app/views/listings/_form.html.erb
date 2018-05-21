@@ -86,3 +86,13 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+<% if @listing.pictures?%>
+<% i=0%>
+  <%while i<@listing.pictures.length do%>
+  <%= image_tag @listing.pictures[i].thumb %><==<%= link_to "delete this pic", picdel_path(@listing.id,i), method: :delete%><br>
+  <br>
+  <%i+=1%>
+  <% end %>
+  <% end %>
+

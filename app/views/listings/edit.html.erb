@@ -2,6 +2,6 @@
 
 <%= render 'form', listing: @listing %>
 
-<%= link_to 'List', "/listings/:id" %> 
-<%= link_to 'Back', listings_path %>
+<%= link_to 'BacktoList', "/listings/#{params[:id]}" %> <br>
+<%= link_to 'All Listings', listings_path %>
 
