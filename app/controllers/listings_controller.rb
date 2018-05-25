@@ -3,25 +3,25 @@ class ListingsController < ApplicationController
 
   def listings
     # byebug
-    if params[:query]
+    if params[:query] && params[:query]!=""
       @listings = Listing.where(verification: "yes")
-      @listings = @listings.where('location LIKE?', "%#{params[:query]}%")
+      # @listings = Listing.where('location LIKE?', "%#{params[:query]}%")
       # @listings = @listings.where('title LIKE?', "%#{params[:search]}%") 
       # @listings = @listings.where('city LIKE?', "%#{params[:search]}%")
-      @listings = @listings.where('country LIKE?',"%#{params[:query]}%")
-      if params[:price] && params[:price1] 
-        @listings = @listings.where(price: params[:price]..params[:price1])
+      @listings = @listings.where('country LIKE?',"%#{params[:query]}%").paginate(:page => params[:page], :per_page => 5)
+      if params[:price]!="" && params[:price1]!=""
+        @listings = @listings.where(price: params[:price]..params[:price1]).paginate(:page => params[:page], :per_page => 5)
       end
-    elsif params[:query] =""
-      if params[:price] && params[:price1]
+    elsif params[:query] && params[:query] ==""
+      if params[:price]!="" && params[:price1]!=""
         @listings = Listing.where(verification: "yes")
-        @listings = @listings.where(price: params[:price]..params[:price1])
+        @listings = @listings.where(price: params[:price]..params[:price1]).paginate(:page => params[:page], :per_page => 5)
+      elsif params[:price]==""&& params[:price1]==""
+        @listings = Listing.where(verification: "yes").paginate(:page => params[:page], :per_page => 5)
       end
-    else
-      
+    elsif (!params[:query]) && (!params[:price]&& !params[:price1])    
       @listings = Listing.where(verification: "yes").paginate(:page => params[:page], :per_page => 5)
       @listingsAll = Listing.all.paginate(:page => params[:page], :per_page => 5)
-
     end
   end
 
