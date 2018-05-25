@@ -1,6 +1,6 @@
 <% if signed_in? &&current_user.customer? %>
 
-<%= form_tag listings_path, id: "listings-search", method: :post do %>
+<%= form_tag listings_path, id: "listings-search", method: :get do %>
 <p>
 	<%= text_field_tag "query", nil, list: "list", placeholder: "Search" %>
 	<datalist id="list">
@@ -16,7 +16,6 @@ Price Range <br>
 <% end %>
 	<% count =0 %>
 	<% @listings.each do |listing|  %>
-	<% if listing.verification == "yes" %>
 	<%= count+1%>
 	<%= listing.location %> <== Verified Listing<br>
 	$<%= listing.price %><br>
@@ -27,7 +26,6 @@ Price Range <br>
 	<a href="/listings/<%= listing.id %>/reservations/new">Request to Book</a><br>
 	<% count +=1%>
 	<br>
-	<% end %>
 	<% end %>
 	<%= will_paginate @listings%>
 <%elsif signed_in? && current_user.superadmin?%>
@@ -47,7 +45,7 @@ Price Range <br>
 	<p>Create an account or sign in to view listings </p>
 <% end %>
 
-<script>
+<!-- <script>
 $("#listings-search").on("keyup", function(){
   autocomplete()
 });
@@ -89,5 +87,5 @@ function autocomplete(){
 
 
 
-</script>
+</script> -->
 

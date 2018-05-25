@@ -1,5 +1,6 @@
 <% if signed_in? &&current_user.customer? %>
-<%= form_tag listings_path, id: "listings-search", method: :post do %>
+
+<%= form_tag listings_path, id: "listings-search", method: :get do %>
 <p>
 	<%= text_field_tag "query", nil, list: "list", placeholder: "Search" %>
 	<datalist id="list">
@@ -15,9 +16,8 @@ Price Range <br>
 <% end %>
 	<% count =0 %>
 	<% @listings.each do |listing|  %>
-	<% if listing.verification == "yes" %>
 	<%= count+1%>
-	<%= listing.location %> <== Verified Listing =) <br>
+	<%= listing.location %> <== Verified Listing<br>
 	$<%= listing.price %><br>
 	<% if listing.pictures?%>
 	<%= image_tag listing.pictures[0].thumb.url %><br>
@@ -27,8 +27,7 @@ Price Range <br>
 	<% count +=1%>
 	<br>
 	<% end %>
-	<% end %>
- 	<%= will_paginate @listings %>
+	<%= will_paginate @listings%>
 <%elsif signed_in? && current_user.superadmin?%>
 <% count =0 %>
 <% @listingsAll.each do |listing|  %>
@@ -41,14 +40,12 @@ Price Range <br>
 <%= will_paginate @listingsAll %>
                     
 <% else %>
-	<%= link_to "Sign up", sign_up_path %>
+	<%= link_to "Sign up", sign_up_path %><br>
   	<%= link_to "Sign in", sign_in_path %>
-	<p>Create an account or sign in to view listings</p>
+	<p>Create an account or sign in to view listings </p>
 <% end %>
 
-<%= link_to "Home", root_path%>
-
-<script>
+<!-- <script>
 $("#listings-search").on("keyup", function(){
   autocomplete()
 });
@@ -90,5 +87,5 @@ function autocomplete(){
 
 
 
-</script>
+</script> -->
 

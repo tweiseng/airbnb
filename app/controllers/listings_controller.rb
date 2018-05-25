@@ -3,33 +3,40 @@ class ListingsController < ApplicationController
 
   def listings
     # byebug
-    if params[:search]
-      @listings = Listing.where('location LIKE?', "%#{params[:search]}%")
-      @listings = Listing.where('title LIKE?', "%#{params[:search]}%") 
-      @listings = Listing.where('city LIKE?', "%#{params[:search]}%")
-      @listings = Listing.where('country LIKE?', "%#{params[:search]}%")
-      if params[:price] && params[:price1] 
-      @listings = Listing.where(price: params[:price]..params[:price1])
+    if params[:query] && params[:query]!=""
+      @listings = Listing.where(verification: "yes")
+      # @listings = Listing.where('location LIKE?', "%#{params[:query]}%")
+      # @listings = @listings.where('title LIKE?', "%#{params[:search]}%") 
+      # @listings = @listings.where('city LIKE?', "%#{params[:search]}%")
+      @listings = @listings.where('country LIKE?',"%#{params[:query]}%").paginate(:page => params[:page], :per_page => 5)
+      if params[:price]!="" && params[:price1]!=""
+        @listings = @listings.where(price: params[:price]..params[:price1]).paginate(:page => params[:page], :per_page => 5)
       end
-    else
+    elsif params[:query] && params[:query] ==""
+      if params[:price]!="" && params[:price1]!=""
+        @listings = Listing.where(verification: "yes")
+        @listings = @listings.where(price: params[:price]..params[:price1]).paginate(:page => params[:page], :per_page => 5)
+      elsif params[:price]==""&& params[:price1]==""
+        @listings = Listing.where(verification: "yes").paginate(:page => params[:page], :per_page => 5)
+      end
+    elsif (!params[:query]) && (!params[:price]&& !params[:price1])    
       @listings = Listing.where(verification: "yes").paginate(:page => params[:page], :per_page => 5)
       @listingsAll = Listing.all.paginate(:page => params[:page], :per_page => 5)
-
     end
   end
 
-  def search
-    p params
-    @location = Listing.where('location LIKE?', "%#{params[:query]}%")
-    @title = Listing.where('title LIKE?', "%#{params[:query]}%") 
-    @city = Listing.where('city LIKE?', "%#{params[:query]}%")
-    @country = Listing.where('country LIKE?', "%#{params[:query]}%")
-    @min_max = Listing.where(price: params[:price]..params[:price1])
+  # def search
+  #   p params
+  #   @location = Listing.where('location LIKE?', "%#{params[:query]}%")
+  #   @title = Listing.where('title LIKE?', "%#{params[:query]}%") 
+  #   @city = Listing.where('city LIKE?', "%#{params[:query]}%")
+  #   @country = Listing.where('country LIKE?', "%#{params[:query]}%")
+  #   @min_max = Listing.where(price: params[:price]..params[:price1])
      
-      render json: @country
+  #     render json: @location 
 
   
-  end 
+  # end 
 
    def destroy
     # if allowed?(action: "listing_destroy", user: @listing.user)
