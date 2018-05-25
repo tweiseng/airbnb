@@ -2,7 +2,7 @@ class ListingsController < ApplicationController
 
 
   def listings
-    byebug
+    # byebug
     if params[:search]
       @listings = Listing.where('location LIKE?', "%#{params[:search]}%")
       @listings = Listing.where('title LIKE?', "%#{params[:search]}%") 
@@ -12,7 +12,9 @@ class ListingsController < ApplicationController
       @listings = Listing.where(price: params[:price]..params[:price1])
       end
     else
-      @listings = Listing.all #.paginate(:page => params[:page], :per_page => 5)
+      @listings = Listing.where(verification: "yes").paginate(:page => params[:page], :per_page => 5)
+      @listingsAll = Listing.all.paginate(:page => params[:page], :per_page => 5)
+
     end
   end
 
@@ -24,7 +26,7 @@ class ListingsController < ApplicationController
     @country = Listing.where('country LIKE?', "%#{params[:query]}%")
     @min_max = Listing.where(price: params[:price]..params[:price1])
      
-      render json: @location 
+      render json: @country
 
   
   end 
@@ -67,6 +69,10 @@ class ListingsController < ApplicationController
 
   # GET /listings/new
   def new
+    if !signed_in?
+      flash[:notice] = "You need to be signed in to create a listing"
+      redirect_to :back
+    end
     @listing = Listing.new
   end
 
