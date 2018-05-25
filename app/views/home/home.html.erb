@@ -1,6 +1,6 @@
 <% if signed_in? &&current_user.customer? %>
 
-<%= form_tag listings_path, id: "listings-search", method: :post do %>
+<%= form_tag listings_path, id: "listings-search", method: :get do %>
 <p>
 	<%= text_field_tag "query", nil, list: "list", placeholder: "Search" %>
 	<datalist id="list">
